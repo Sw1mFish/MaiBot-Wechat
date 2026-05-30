@@ -1,5 +1,7 @@
 # MaiBot 麦麦 — 微信 AI 机器人
 
+[![Download ZIP](https://img.shields.io/badge/Download-ZIP-green)](https://github.com/Sw1mFish/MaiBot-Wechat/archive/refs/heads/master.zip)
+
 基于大语言模型的微信智能助手，接入 DeepSeek，支持图片识别、表情包管理、群聊互动。
 
 ## 功能
@@ -17,7 +19,7 @@
 |------|------|
 | **Windows 10/11** | 仅限 Windows |
 | **Python 3.12+** | [下载地址](https://www.python.org/downloads/) |
-| **微信 3.9.x** | 桌面版微信客户端 |
+| **微信 3.9.x** | [点此下载微信各版本](https://github.com/tom-snow/wechat-windows-versions) |
 | **DeepSeek API Key** | [免费注册](https://platform.deepseek.com/) |
 
 ## 快速部署
