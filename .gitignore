@@ -26,3 +26,8 @@ Thumbs.db
 
 # 环境
 .env
+
+# 本地生成文件
+/wxauto*/
+maibot_statistics.html
+/.claude/
