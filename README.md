@@ -127,6 +127,26 @@ MaiBot/
 └── logs/                   # 日志
 ```
 
+## 微信版本绕过工具
+
+如果你的微信版本被提示"版本过低"无法登录，可使用附带的补丁工具临时绕过：
+
+```cmd
+pip install pymem
+python toolswechat_patcher.py
+```
+
+**使用步骤：**
+
+1. 打开微信，停留在扫码登录界面
+2. 运行 `python toolswechat_patcher.py`
+3. 按 Enter 执行补丁
+4. 手机扫码（**不要点确认**）→ 再扫一次 → 点确认登录
+
+> ⚠️ 补丁仅临时修改内存，重启微信后需重新执行。仅供学习研究。
+> 📥 下载: [wechat_patcher.py](tools/wechat_patcher.py)
+
+
 ## 已知限制
 
 - 需保持微信窗口可见（不要最小化到托盘）
