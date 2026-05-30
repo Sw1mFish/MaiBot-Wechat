@@ -430,6 +430,7 @@ class WeChatPlatformDriver(PlatformIODriver):
 
         # 检测 wxauto 中的图片/文件类型
         # savepic=True 时，content 是 wxauto 保存的临时文件路径，用完即删
+        logger.info(f"图片检测: content={repr(content[:80])} isfile={os.path.isfile(content)}")
         if os.path.isfile(content):
             try:
                 with open(content, "rb") as f:
