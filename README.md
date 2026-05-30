@@ -76,6 +76,17 @@ enabled = true                       # ← 改为 true 启用微信连接
 3. 看到 `麦麦 已成功唤醒` 说明启动成功
 4. 在微信中给"文件传输助手"发消息测试
 
+## WebUI 控制面板
+
+MaiBot 自带 Web 管理面板，启动后浏览器访问：
+
+> **网址**：[http://localhost:8001](http://localhost:8001)
+> **登录令牌**：启动时终端会显示 `WebUI Token 已加载: xxxx...`，
+> 或在 `data/webui.json` 文件中查看完整的 token。
+
+登录后可在线修改配置、管理表情包、查看日志。
+
+
 ## 配置说明
 
 所有配置都在 `config/` 目录下：
