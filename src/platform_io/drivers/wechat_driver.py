@@ -571,6 +571,14 @@ class WeChatPlatformDriver(PlatformIODriver):
         if newest_file:
             try:
                 data = open(newest_file, "rb").read()
+                # XOR decode WeChat .dat cache files
+                if newest_file.endswith(".dat"):
+                    xor_key = data[0] ^ 0xFF
+                    decoded = bytes(b ^ xor_key for b in data)
+                    jpeg_hdr = bytes([0xFF, 0xD8, 0xFF])
+                    png_hdr = bytes([0x89, 0x50, 0x4E, 0x47])
+                    if decoded[:3] == jpeg_hdr or decoded[:4] == png_hdr:
+                        data = decoded
                 if len(data) > 100 and len(data) < 10 * 1024 * 1024:
                     return data
             except Exception:
