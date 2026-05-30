@@ -133,18 +133,19 @@ MaiBot/
 
 ```cmd
 pip install pymem
-python toolswechat_patcher.py
+python tools/wechat_patcher.py
 ```
 
 **使用步骤：**
 
 1. 打开微信，停留在扫码登录界面
-2. 运行 `python toolswechat_patcher.py`
+2. 运行 `python tools/wechat_patcher.py`
 3. 按 Enter 执行补丁
 4. 手机扫码（**不要点确认**）→ 再扫一次 → 点确认登录
 
 > ⚠️ 补丁仅临时修改内存，重启微信后需重新执行。仅供学习研究。
 > 📥 下载: [wechat_patcher.py](tools/wechat_patcher.py)
+> 作者：B站 [@山山official](https://space.bilibili.com/695805824)
 
 
 ## 已知限制
@@ -156,3 +157,6 @@ python toolswechat_patcher.py
 ## ❤️ 致谢
 
 本项目基于 [MaiBot](https://github.com/MaiM-with-u/MaiBot) 修改，增加了微信适配层。
+
+- 原项目: [MaiM-with-u/MaiBot](https://github.com/MaiM-with-u/MaiBot)
+- 本仓库仅添加微信适配层及部署工具，核心功能归原项目所有
