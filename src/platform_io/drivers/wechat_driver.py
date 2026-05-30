@@ -51,7 +51,7 @@ def _get_wx_listen_messages(wx):
     for name in list(wx.listen.keys()):
         try:
             chat = wx.listen[name]
-            new_msgs = chat.GetNewMessage(savepic=True, savefile=False, savevoice=False)
+            new_msgs = chat.GetNewMessage(savepic=False, savefile=False, savevoice=False)
             if new_msgs:
                 msgs[str(name)] = new_msgs
         except Exception:
@@ -132,7 +132,7 @@ class WeChatPlatformDriver(PlatformIODriver):
             if name_str:
                 self._known_sessions.add(name_str)
                 try:
-                    _wx_sync(self._wx.AddListenChat, name_str, savepic=True)
+                    _wx_sync(self._wx.AddListenChat, name_str, savepic=False)
                 except Exception:
                     pass
 
@@ -349,7 +349,7 @@ class WeChatPlatformDriver(PlatformIODriver):
                             try:
                                 await loop.run_in_executor(
                                     None,
-                                    lambda n=name_str: _wx_sync(self._wx.AddListenChat, n, savepic=True),
+                                    lambda n=name_str: _wx_sync(self._wx.AddListenChat, n, savepic=False),
                                 )
                                 logger.debug(f"WeChat 添加新监听会话: {name_str}")
                             except Exception:
@@ -429,7 +429,7 @@ class WeChatPlatformDriver(PlatformIODriver):
         components = []
 
         # 检测 wxauto 中的图片/文件类型
-        # 当 savepic=True 时，图片消息的 content 是文件路径
+        # 当 savepic=False 时，图片消息的 content 是文件路径
         if os.path.isfile(content):
             try:
                 with open(content, "rb") as f:
@@ -448,7 +448,21 @@ class WeChatPlatformDriver(PlatformIODriver):
             except Exception:
                 components.append(TextComponent(text="[图片]"))
         elif content.startswith("[图片]") or content.startswith("[Picture]"):
-            components.append(TextComponent(text="[图片]"))
+            # 从微信缓存目录查找最新图片（不点击 UI）
+            img_data = self._find_recent_cache_image()
+            if img_data:
+                desc = await self._describe_image(img_data)
+                try:
+                    from src.emoji_system.emoji_manager import emoji_manager as emoji_mgr
+                    await emoji_mgr.ensure_emoji_saved(img_data)
+                except Exception:
+                    pass
+                if desc:
+                    components.append(TextComponent(text=f"[图片：{desc}]"))
+                else:
+                    components.append(TextComponent(text="[图片]"))
+            else:
+                components.append(TextComponent(text="[图片]"))
         elif content.startswith("[文件]") or content.startswith("[File]"):
             components.append(TextComponent(text="[文件]"))
         elif content.startswith("[语音]") or content.startswith("[Voice]"):
@@ -546,7 +560,7 @@ class WeChatPlatformDriver(PlatformIODriver):
                 if name_str and name_str not in self._known_sessions:
                     self._known_sessions.add(name_str)
                     try:
-                        _wx_sync(self._wx.AddListenChat, name_str, savepic=True)
+                        _wx_sync(self._wx.AddListenChat, name_str, savepic=False)
                     except Exception:
                         pass
         except Exception:
