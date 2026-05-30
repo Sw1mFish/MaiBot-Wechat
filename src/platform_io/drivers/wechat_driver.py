@@ -51,7 +51,7 @@ def _get_wx_listen_messages(wx):
     for name in list(wx.listen.keys()):
         try:
             chat = wx.listen[name]
-            new_msgs = chat.GetNewMessage(savepic=False, savefile=False, savevoice=False)
+            new_msgs = chat.GetNewMessage(savepic=True, savefile=False, savevoice=False)
             if new_msgs:
                 msgs[str(name)] = new_msgs
         except Exception:
@@ -448,59 +448,7 @@ class WeChatPlatformDriver(PlatformIODriver):
             except Exception:
                 components.append(TextComponent(text="[图片]"))
         elif content.startswith("[图片]") or content.startswith("[Picture]"):
-            # 不点击图片，通过 wxauto 定位最后一条消息区域后截图
-            try:
-                from PIL import ImageGrab
-                from io import BytesIO
-                import ctypes
-                from ctypes import wintypes
-                
-                user32 = ctypes.windll.user32
-                hwnd = user32.FindWindowW("WeChatMainWndForPC", None)
-                if hwnd:
-                    rect = wintypes.RECT()
-                    user32.GetWindowRect(hwnd, ctypes.byref(rect))
-                    w = rect.right - rect.left
-                    h = rect.bottom - rect.top
-                    # 尝试通过 wxauto 获取最后一条消息的位置
-                    msg_left = rect.left + 280
-                    msg_top = rect.top + int(h * 0.35)
-                    msg_right = rect.right
-                    msg_bottom = rect.bottom - int(h * 0.08)
-                    try:
-                        if hasattr(self._wx, "C_MsgList"):
-                            items = self._wx.C_MsgList.GetChildren()
-                            if items:
-                                last = items[-1]
-                                br = last.BoundingRectangle
-                                if br.width() > 10 and br.height() > 10:
-                                    msg_left = max(br.left - 10, rect.left + 280)
-                                    msg_top = max(br.top - 10, rect.top)
-                                    msg_right = min(br.right + 10, rect.right)
-                                    msg_bottom = min(br.bottom + 10, rect.bottom)
-                    except Exception:
-                        pass
-                    if msg_left < msg_right and msg_top < msg_bottom:
-                        img = ImageGrab.grab(bbox=(msg_left, msg_top, msg_right, msg_bottom))
-                        buf = BytesIO()
-                        img.save(buf, format="PNG")
-                        img_data = buf.getvalue()
-                        desc = await self._describe_image(img_data)
-                        try:
-                            from src.emoji_system.emoji_manager import emoji_manager as emoji_mgr
-                            await emoji_mgr.ensure_emoji_saved(img_data)
-                        except Exception:
-                            pass
-                        if desc:
-                            components.append(TextComponent(text=f"[图片：{desc}]"))
-                        else:
-                            components.append(TextComponent(text="[图片]"))
-                    else:
-                        components.append(TextComponent(text="[图片]"))
-                else:
-                    components.append(TextComponent(text="[图片]"))
-            except Exception:
-                components.append(TextComponent(text="[图片]"))
+            components.append(TextComponent(text="[图片]"))
         elif content.startswith("[文件]") or content.startswith("[File]"):
             components.append(TextComponent(text="[文件]"))
         elif content.startswith("[语音]") or content.startswith("[Voice]"):
