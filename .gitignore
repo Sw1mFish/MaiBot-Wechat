@@ -1,0 +1,28 @@
+# 配置文件（含 API Key 等敏感信息）
+/config/bot_config.toml
+/config/model_config.toml
+/config/*.local.toml
+/config/.env
+
+# 数据目录（自动生成）
+/data/
+/logs/
+/*.confirmed
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Windows
+Thumbs.db
+
+# 环境
+.env

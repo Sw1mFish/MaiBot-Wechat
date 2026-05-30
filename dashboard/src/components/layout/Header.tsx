@@ -1,0 +1,265 @@
+import { Link } from '@tanstack/react-router'
+import {
+  BookOpen,
+  ChevronLeft,
+  Globe,
+  LogOut,
+  Menu,
+  MessageSquare,
+  Moon,
+  Search,
+  Server,
+  SlidersHorizontal,
+  Sun,
+} from 'lucide-react'
+import { LayoutGroup, motion } from 'motion/react'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { BackgroundLayer } from '@/components/background-layer'
+import { BackendManager } from '@/components/electron/BackendManager'
+import { SearchDialog } from '@/components/search-dialog'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { toggleThemeWithTransition } from '@/components/use-theme'
+import { useBackground } from '@/hooks/use-background'
+import { logout } from '@/lib/fetch-with-auth'
+import { isElectron } from '@/lib/runtime'
+import { cn } from '@/lib/utils'
+import type { WorkspaceMode } from './types'
+
+const LANGUAGE_CODES = ['zh', 'en', 'ja', 'ko'] as const
+const LANGUAGE_NAMES: Record<(typeof LANGUAGE_CODES)[number], string> = {
+  zh: '中文',
+  en: 'English',
+  ja: '日本語',
+  ko: '한국어',
+}
+
+interface HeaderProps {
+  sidebarOpen: boolean
+  mobileMenuOpen: boolean
+  searchOpen: boolean
+  actualTheme: 'light' | 'dark'
+  onSidebarToggle: () => void
+  onMobileMenuToggle: () => void
+  onSearchOpenChange: (open: boolean) => void
+  onThemeChange: (theme: 'light' | 'dark' | 'system') => void
+  workspaceMode: WorkspaceMode
+}
+
+export function Header({
+  sidebarOpen,
+  mobileMenuOpen,
+  searchOpen,
+  actualTheme,
+  onSidebarToggle,
+  onMobileMenuToggle,
+  onSearchOpenChange,
+  onThemeChange,
+  workspaceMode,
+}: HeaderProps) {
+  const { t, i18n: i18nInstance } = useTranslation()
+  const currentLang = i18nInstance.language || 'zh'
+  const { config: headerBg, inheritedFrom } = useBackground('header')
+  const inheritsPageBackground = inheritedFrom === 'page'
+  const [backendManagerOpen, setBackendManagerOpen] = useState(false)
+  const [activeBackendName, setActiveBackendName] = useState<string>('')
+
+  useEffect(() => {
+    if (!isElectron()) return
+    window.electronAPI!.getActiveBackend().then((b) => {
+      setActiveBackendName(b?.name ?? t('header.notConnected'))
+    })
+  }, [])
+
+  const handleLogout = async () => {
+    await logout()
+  }
+
+  return (
+    <header
+      data-dashboard-header="true"
+      className={cn(
+        'sticky top-0 isolate z-10 flex h-16 min-w-0 items-center justify-between gap-2 border-b px-3 backdrop-blur-md sm:px-4',
+        inheritsPageBackground ? 'bg-transparent' : 'bg-card/80'
+      )}
+    >
+      {!inheritsPageBackground && <BackgroundLayer config={headerBg} layerId="header" />}
+      <div className="relative z-10 flex min-w-0 shrink-0 items-center gap-2 sm:gap-4">
+        {/* 移动端菜单按钮 */}
+        <button
+          onClick={onMobileMenuToggle}
+          aria-label={t('a11y.closeMenu')}
+          aria-expanded={mobileMenuOpen}
+          className={cn(
+            'hover:bg-accent rounded-lg p-2 lg:hidden',
+            workspaceMode === 'chat' && 'hidden'
+          )}
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+
+        {/* 桌面端侧边栏收起/展开按钮 */}
+        <button
+          onClick={onSidebarToggle}
+          aria-label={sidebarOpen ? t('header.collapseSidebar') : t('header.expandSidebar')}
+          aria-expanded={sidebarOpen}
+          className={cn(
+            'hover:bg-accent hidden rounded-lg p-2 lg:block',
+            workspaceMode === 'chat' && 'lg:hidden'
+          )}
+        >
+          <ChevronLeft
+            className={cn('h-5 w-5 transition-transform', !sidebarOpen && 'rotate-180')}
+          />
+        </button>
+      </div>
+
+      <div className="relative z-10 flex min-w-0 flex-1 items-center justify-end gap-1 sm:gap-2">
+        {/* 工作区切换：复用 Tabs 组件 + Motion 动画指示器 */}
+        <LayoutGroup id="workspace-switcher">
+          <Tabs value={workspaceMode} aria-label={t('workspace.switcherLabel')}>
+            <TabsList className="bg-background/60 relative h-9 gap-0.5 border p-1 shadow-sm backdrop-blur">
+              <TabsTrigger
+                asChild
+                value="settings"
+                className="data-[state=active]:text-primary-foreground relative h-7 gap-1.5 bg-transparent px-2.5 text-xs font-medium data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                <Link to="/">
+                  {workspaceMode === 'settings' && (
+                    <motion.span
+                      layoutId="workspace-tab-pill"
+                      className="bg-primary absolute inset-0 -z-10 rounded-md shadow-sm"
+                      transition={{ type: 'spring', stiffness: 480, damping: 38, mass: 0.6 }}
+                    />
+                  )}
+                  <SlidersHorizontal className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">{t('workspace.settings')}</span>
+                </Link>
+              </TabsTrigger>
+              <TabsTrigger
+                asChild
+                value="chat"
+                className="data-[state=active]:text-primary-foreground relative h-7 gap-1.5 bg-transparent px-2.5 text-xs font-medium data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+              >
+                <Link to="/chat">
+                  {workspaceMode === 'chat' && (
+                    <motion.span
+                      layoutId="workspace-tab-pill"
+                      className="bg-primary absolute inset-0 -z-10 rounded-md shadow-sm"
+                      transition={{ type: 'spring', stiffness: 480, damping: 38, mass: 0.6 }}
+                    />
+                  )}
+                  <MessageSquare className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">{t('workspace.chat')}</span>
+                </Link>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </LayoutGroup>
+
+        <div className="bg-border hidden h-6 w-px sm:block" />
+        {/* 后端切换按钮（仅 Electron） */}
+        {isElectron() && (
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2"
+              onClick={() => setBackendManagerOpen(true)}
+              title={t('header.toggleConnection')}
+            >
+              <Server className="h-4 w-4" />
+              <span className="text-muted-foreground hidden max-w-25 truncate text-xs sm:inline">
+                {activeBackendName}
+              </span>
+            </Button>
+            <BackendManager open={backendManagerOpen} onOpenChange={setBackendManagerOpen} />
+            <div className="bg-border h-6 w-px" />
+          </>
+        )}
+        {/* 搜索框 */}
+        <button
+          onClick={() => onSearchOpenChange(true)}
+          aria-label={t('header.searchPlaceholder')}
+          title={t('header.searchPlaceholder')}
+          className="bg-background/50 hover:bg-accent/50 hidden h-9 w-12 items-center justify-center rounded-md border transition-colors md:flex"
+        >
+          <Search className="text-muted-foreground h-4 w-4" aria-hidden="true" />
+        </button>
+
+        {/* 搜索对话框 */}
+        <SearchDialog open={searchOpen} onOpenChange={onSearchOpenChange} />
+
+        {/* 麦麦文档链接 */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => window.open('https://docs.mai-mai.org', '_blank')}
+          className="hidden sm:inline-flex"
+          title={t('header.viewDocs')}
+          aria-label={t('header.viewDocs')}
+        >
+          <BookOpen className="h-4 w-4" />
+        </Button>
+
+        {/* 语言切换 */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" title="切换语言" aria-label="切换语言">
+              <Globe className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {LANGUAGE_CODES.map((code) => (
+              <DropdownMenuItem
+                key={code}
+                onClick={() => i18nInstance.changeLanguage(code)}
+                className={cn(
+                  'cursor-pointer',
+                  currentLang.split('-')[0] === code && 'text-primary font-semibold'
+                )}
+              >
+                {currentLang.split('-')[0] === code && <span className="mr-2">✓</span>}
+                {LANGUAGE_NAMES[code]}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* 主题切换按钮 */}
+        <button
+          onClick={(e) => {
+            const newTheme = actualTheme === 'dark' ? 'light' : 'dark'
+            toggleThemeWithTransition(newTheme, onThemeChange, e)
+          }}
+          aria-label={actualTheme === 'dark' ? t('header.switchToLight') : t('header.switchToDark')}
+          className="hover:bg-accent rounded-lg p-2"
+        >
+          {actualTheme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        </button>
+
+        {/* 分隔线 */}
+        <div className="bg-border hidden h-6 w-px sm:block" />
+
+        {/* 登出按钮 */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleLogout}
+          title={t('header.logout')}
+          aria-label={t('header.logout')}
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
+      </div>
+    </header>
+  )
+}

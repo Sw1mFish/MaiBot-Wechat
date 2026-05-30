@@ -1,0 +1,25 @@
+# ============================================
+#  MaiBot 机器人配置示例
+#  复制此文件为 bot_config.toml 后修改
+# ============================================
+
+[bot]
+platforms = ["wx:你的微信昵称"]       # ← 改成你的微信显示名
+nickname = "麦麦"                     # ← 机器人名字（被 @时识别的名字）
+alias_names = ["你的微信昵称"]        # ← 别名，群聊 @这些名字也会回复
+
+[personality]
+personality = "你是一个大二女大学生，现在正在上网和群友聊天。"
+reply_style = "你的风格平淡简短，可以参考贴吧风格。"
+
+[chat]
+talk_value = 1                        # 群聊活跃度（0-1）
+private_talk_value = 1                # 私聊活跃度（0-1）
+
+[wechat]
+enabled = true                        # ← 改为 true 启用微信连接
+poll_interval = 1.0                   # 消息轮询间隔（秒）
+
+[emoji]
+steal_emoji = true                    # 是否自动保存表情包（默认开启）
+max_reg_num = 64                      # 表情包最大数量
