@@ -77,6 +77,23 @@ class MainSystem:
 
         logger.info(t("startup.initialization_completed_banner", nickname=global_config.bot.nickname))
 
+        # 显示 WebUI 访问信息
+        if global_config.webui.enabled:
+            print()
+            print("=" * 50)
+            print("  WebUI 控制面板")
+            print("=" * 50)
+            print("  网址: http://{}:{}".format(global_config.webui.host, global_config.webui.port))
+            try:
+                from src.webui.core import get_token_manager
+                token_manager = get_token_manager()
+                token = token_manager.get_token()
+                print("  Token: {}".format(token))
+            except Exception:
+                pass
+            print("=" * 50)
+            print()
+
     async def _init_components(self) -> None:
         """初始化其他组件"""
         init_start_time = time.time()
