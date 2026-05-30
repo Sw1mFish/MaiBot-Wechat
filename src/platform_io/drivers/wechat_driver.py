@@ -7,6 +7,7 @@ wxauto 使用微软的 UI Automation 框架与微信客户端交互，不涉及 
 
 import asyncio
 import os
+import random
 import re
 import tempfile
 from datetime import datetime
@@ -309,6 +310,20 @@ class WeChatPlatformDriver(PlatformIODriver):
                         at=at_list if at_list else None,
                     ),
                 )
+                # 15% 概率随机附带一张表情包
+                if receiver and random.random() < 0.15:
+                    try:
+                        emoji_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "emoji")
+                        if os.path.isdir(emoji_dir):
+                            files = [f for f in os.listdir(emoji_dir) if f.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp"))]
+                            if files:
+                                chosen = os.path.join(emoji_dir, random.choice(files))
+                                await loop.run_in_executor(
+                                    None,
+                                    lambda: _wx_sync(self._wx.SendFiles, chosen, who=receiver),
+                                )
+                    except Exception:
+                        pass
 
         except Exception as exc:
             logger.error(f"wxauto 发送消息失败: {exc}")
