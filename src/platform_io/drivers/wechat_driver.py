@@ -436,13 +436,13 @@ class WeChatPlatformDriver(PlatformIODriver):
                     img_data = f.read()
                 # 尝试同步获取图片描述（VLM）并注册为表情包
                 desc = await self._describe_image(img_data)
+                # 不论 VLM 是否成功，都注册为表情包
+                try:
+                    from src.emoji_system.emoji_manager import emoji_manager as emoji_mgr
+                    await emoji_mgr.ensure_emoji_saved(img_data)
+                except Exception:
+                    pass
                 if desc:
-                    # 也注册到表情包管理器
-                    try:
-                        from src.emoji_system.emoji_manager import emoji_manager as emoji_mgr
-                        await emoji_mgr.ensure_emoji_saved(img_data, desc)
-                    except Exception:
-                        pass
                     components.append(TextComponent(text=f"[图片：{desc}]"))
                 else:
                     from src.common.data_models.message_component_data_model import ImageComponent
