@@ -22,6 +22,11 @@
 
 ## 快速部署
 
+> 📥 **不想注册 GitHub？** 点此直接下载全部文件:
+> [MaiBot-Wechat-master.zip](https://github.com/Sw1mFish/MaiBot-Wechat/archive/refs/heads/master.zip)
+> 解压后双击 `quick_start.bat` 即可开始部署。
+
+
 ### 方法一：一键部署（推荐）
 
 双击 `quick_start.bat`，按提示输入 API Key 和微信昵称即可。
