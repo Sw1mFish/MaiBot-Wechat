@@ -51,7 +51,7 @@ def _get_wx_listen_messages(wx):
     for name in list(wx.listen.keys()):
         try:
             chat = wx.listen[name]
-            new_msgs = chat.GetNewMessage(savepic=False, savefile=False, savevoice=False)
+            new_msgs = chat.GetNewMessage(savepic=True, savefile=False, savevoice=False)
             if new_msgs:
                 msgs[str(name)] = new_msgs
         except Exception:
@@ -429,7 +429,7 @@ class WeChatPlatformDriver(PlatformIODriver):
         components = []
 
         # 检测 wxauto 中的图片/文件类型
-        # 当 savepic=False 时，图片消息的 content 是文件路径
+        # savepic=True 时，content 是 wxauto 保存的临时文件路径，用完即删
         if os.path.isfile(content):
             try:
                 with open(content, "rb") as f:
@@ -438,6 +438,11 @@ class WeChatPlatformDriver(PlatformIODriver):
                 try:
                     from src.emoji_system.emoji_manager import emoji_manager as emoji_mgr
                     await emoji_mgr.ensure_emoji_saved(img_data)
+                except Exception:
+                    pass
+                # 用完即删临时图片文件
+                try:
+                    os.remove(content)
                 except Exception:
                     pass
                 if desc:
@@ -455,6 +460,11 @@ class WeChatPlatformDriver(PlatformIODriver):
                 try:
                     from src.emoji_system.emoji_manager import emoji_manager as emoji_mgr
                     await emoji_mgr.ensure_emoji_saved(img_data)
+                except Exception:
+                    pass
+                # 用完即删临时图片文件
+                try:
+                    os.remove(content)
                 except Exception:
                     pass
                 if desc:
