@@ -537,6 +537,37 @@ class WeChatPlatformDriver(PlatformIODriver):
         )
 
     # ------------------------------------------------------------------
+    @staticmethod
+    def _find_recent_cache_image() -> Optional[bytes]:
+        """从微信文件缓存中查找最新收到的图片。"""
+        import glob
+        cache_patterns = [
+            os.path.expanduser("~/Documents/WeChat Files/*/FileStorage/Image/*/*.jpg"),
+            os.path.expanduser("~/Documents/WeChat Files/*/FileStorage/Image/*/*.png"),
+            os.path.expanduser("~/Documents/WeChat Files/*/FileStorage/Image/*/*.gif"),
+            os.path.expanduser("~/Documents/WeChat Files/*/FileStorage/Image/*/*.webp"),
+        ]
+        newest_file = None
+        newest_time = 0
+        for pattern in cache_patterns:
+            for fpath in glob.glob(pattern):
+                try:
+                    mtime = os.path.getmtime(fpath)
+                    if mtime > newest_time:
+                        newest_time = mtime
+                        newest_file = fpath
+                except OSError:
+                    continue
+        if newest_file:
+            try:
+                data = open(newest_file, "rb").read()
+                if len(data) > 100 and len(data) < 10 * 1024 * 1024:
+                    return data
+            except Exception:
+                pass
+        return None
+
+
     async def _describe_image(self, image_bytes: bytes) -> str:
         logger.info(f"正在调用 VLM 描述图片，大小={len(image_bytes)}字节")
         """同步获取图片描述（VLM）。"""
