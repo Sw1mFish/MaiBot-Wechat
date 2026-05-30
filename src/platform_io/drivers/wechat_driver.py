@@ -51,7 +51,7 @@ def _get_wx_listen_messages(wx):
     for name in list(wx.listen.keys()):
         try:
             chat = wx.listen[name]
-            new_msgs = chat.GetNewMessage(savepic=True, savefile=False, savevoice=False)
+            new_msgs = chat.GetNewMessage(savepic=False, savefile=False, savevoice=False)
             if new_msgs:
                 msgs[str(name)] = new_msgs
         except Exception:
@@ -434,9 +434,7 @@ class WeChatPlatformDriver(PlatformIODriver):
             try:
                 with open(content, "rb") as f:
                     img_data = f.read()
-                # 尝试同步获取图片描述（VLM）并注册为表情包
                 desc = await self._describe_image(img_data)
-                # 不论 VLM 是否成功，都注册为表情包
                 try:
                     from src.emoji_system.emoji_manager import emoji_manager as emoji_mgr
                     await emoji_mgr.ensure_emoji_saved(img_data)
@@ -450,7 +448,43 @@ class WeChatPlatformDriver(PlatformIODriver):
             except Exception:
                 components.append(TextComponent(text="[图片]"))
         elif content.startswith("[图片]") or content.startswith("[Picture]"):
-            components.append(TextComponent(text="[图片]"))
+            # 不点击图片，改用截屏获取画面内容
+            try:
+                from PIL import ImageGrab
+                from io import BytesIO
+                import ctypes
+                from ctypes import wintypes
+                
+                user32 = ctypes.windll.user32
+                hwnd = user32.FindWindowW("WeChatMainWndForPC", None)
+                if hwnd:
+                    rect = wintypes.RECT()
+                    user32.GetWindowRect(hwnd, ctypes.byref(rect))
+                    w = rect.right - rect.left
+                    h = rect.bottom - rect.top
+                    if w > 200 and h > 200:
+                        # 截取右侧聊天区域底部（最后一条消息）
+                        left_skip = 280
+                        top_area = rect.top + int(h * 0.55)
+                        bottom_area = rect.bottom - int(h * 0.12)
+                        left_area = rect.left + left_skip
+                        if left_area < rect.right and top_area < bottom_area:
+                            img = ImageGrab.grab(bbox=(left_area, top_area, rect.right, bottom_area))
+                            buf = BytesIO()
+                            img.save(buf, format="PNG")
+                            img_data = buf.getvalue()
+                            desc = await self._describe_image(img_data)
+                            try:
+                                from src.emoji_system.emoji_manager import emoji_manager as emoji_mgr
+                                await emoji_mgr.ensure_emoji_saved(img_data)
+                            except Exception:
+                                pass
+                            if desc:
+                                components.append(TextComponent(text=f"[图片：{desc}]"))
+                            else:
+                                components.append(TextComponent(text="[图片]"))
+            except Exception:
+                components.append(TextComponent(text="[图片]"))
         elif content.startswith("[文件]") or content.startswith("[File]"):
             components.append(TextComponent(text="[文件]"))
         elif content.startswith("[语音]") or content.startswith("[Voice]"):
