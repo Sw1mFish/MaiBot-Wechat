@@ -436,11 +436,6 @@ class WeChatPlatformDriver(PlatformIODriver):
                 with open(content, "rb") as f:
                     img_data = f.read()
                 desc = await self._describe_image(img_data)
-                try:
-                    from src.emoji_system.emoji_manager import emoji_manager as emoji_mgr
-                    await emoji_mgr.ensure_emoji_saved(img_data)
-                except Exception:
-                    pass
                 # 用完即删临时图片文件
                 try:
                     os.remove(content)
@@ -458,11 +453,6 @@ class WeChatPlatformDriver(PlatformIODriver):
             img_data = self._find_recent_cache_image()
             if img_data:
                 desc = await self._describe_image(img_data)
-                try:
-                    from src.emoji_system.emoji_manager import emoji_manager as emoji_mgr
-                    await emoji_mgr.ensure_emoji_saved(img_data)
-                except Exception:
-                    pass
                 # 用完即删临时图片文件
                 try:
                     os.remove(content)
