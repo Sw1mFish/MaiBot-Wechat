@@ -2,16 +2,17 @@
 
 [![Download ZIP](https://img.shields.io/badge/Download-ZIP-green)](https://github.com/Sw1mFish/MaiBot-Wechat/archive/refs/heads/master.zip)
 
-基于大语言模型的微信智能助手，接入 DeepSeek，支持图片识别、表情包管理、群聊互动。
+基于大语言模型的微信智能助手，接入 DeepSeek，支持图片识别、群聊互动。
 
 ## 功能
 
 - 💬 **智能对话** — 接入 DeepSeek 大模型，自然聊天
-- 🖼️ **图片识别** — 能看懂发的图片和表情包内容（需免费注册 SiliconFlow）
-- 😊 **表情包管理** — 自动保存聊天中的表情包，能根据情绪选图发送
+- 🖼️ **图片识别** — 能看懂发的图片（需免费注册 SiliconFlow）
 - 👥 **群聊互动** — 群聊被 @ 时自动回复，会观察学习群聊氛围
 - 🧠 **长期记忆** — 记住用户偏好和聊天历史
 - 🔌 **插件系统** — 支持功能扩展
+
+> 基本特性可查看[原版 MaiBot 文档](https://docs.mai-mai.org)
 
 ## 前置要求
 
@@ -156,6 +157,8 @@ python tools/wechat_patcher.py
 
 
 ## 已知限制
+- 由于微信接口限制，无法主动保存聊天中的表情包
+
 
 - 需保持微信窗口可见（不要最小化到托盘）
 - 使用微信显示名称而非 ID，改名后可能影响会话连续性
