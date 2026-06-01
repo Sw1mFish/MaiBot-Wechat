@@ -1,5 +1,5 @@
 @echo off
-chcp 65001 >/dev/null
+chcp 65001 >nul
 set PYTHONIOENCODING=utf-8
 title MaiBot 快速部署向导
 
@@ -9,7 +9,7 @@ echo ============================================
 echo.
 
 :: 检查 Python
-python --version >/dev/null 2>&1
+python --version >nul 2>&1
 if %errorlevel% neq 0 (
     echo [错误] 未检测到 Python，请先安装 Python 3.12+
     echo 下载地址: https://www.python.org/downloads/
@@ -53,7 +53,7 @@ echo.
 echo [2/4] 生成配置文件...
 
 :: 复制并修改 bot_config
-copy /Y config\example.bot_config.toml config\bot_config.toml >/dev/null
+copy /Y config\example.bot_config.toml config\bot_config.toml >nul
 python -c "
 import re
 path = 'config/bot_config.toml'
@@ -66,7 +66,7 @@ with open(path, 'w', encoding='utf-8') as f:
 "
 
 :: 复制并修改 model_config
-copy /Y config\example.model_config.toml config\model_config.toml >/dev/null
+copy /Y config\example.model_config.toml config\model_config.toml >nul
 python -c "
 path = 'config/model_config.toml'
 with open(path, 'r', encoding='utf-8') as f:
