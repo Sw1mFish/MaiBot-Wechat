@@ -32,7 +32,9 @@
 
 ### 方法一：一键部署（推荐）
 
-双击 `quick_start.bat`，按提示输入 API Key 和微信昵称即可。
+双击 `quick_start.bat`（或 `setup_gui.bat` 图形界面版），按提示输入 API Key 和微信昵称即可。
+
+或者直接双击 `setup_gui.bat` 使用图形界面。
 
 ### 方法二：手动部署
 
