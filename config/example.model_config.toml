@@ -8,10 +8,62 @@ name = "DeepSeek"
 api_key = "sk-你的DeepSeekKey"         # ← 改成你的 DeepSeek API Key
 base_url = "https://api.deepseek.com"
 client_type = "openai"
+timeout = 60
 
-# 如需图片识别，取消下方注释并填入 SiliconFlow Key
+[[models]]
+model_identifier = "deepseek-v4-pro"
+name = "deepseek-v4-pro-think"
+api_provider = "DeepSeek"
+price_in = 12.0
+price_out = 24.0
+extra_params = {thinking = {type = "enabled"}, reasoning_effort = "high"}
+
+[[models]]
+model_identifier = "deepseek-v4-pro"
+name = "deepseek-v4-pro-nonthink"
+api_provider = "DeepSeek"
+price_in = 12.0
+price_out = 24.0
+extra_params = {thinking = {type = "disabled"}}
+
+[[models]]
+model_identifier = "deepseek-v4-flash"
+name = "deepseek-v4-flash"
+api_provider = "DeepSeek"
+price_in = 1.0
+price_out = 2.0
+
+[model_task_config.planner]
+model_list = ["deepseek-v4-flash"]
+max_tokens = 8000
+temperature = 0.7
+
+[model_task_config.replyer]
+model_list = ["deepseek-v4-pro-think", "deepseek-v4-pro-nonthink"]
+max_tokens = 4096
+temperature = 1.0
+selection_strategy = "random"
+
+[model_task_config.utils]
+model_list = ["deepseek-v4-flash"]
+max_tokens = 4096
+temperature = 0.5
+
+# 如需图片识别，取消下方注释并填写 SiliconFlow Key
 # [[api_providers]]
 # name = "SiliconFlow"
 # api_key = "sk-你的SiliconFlowKey"
 # base_url = "https://api.siliconflow.cn/v1"
 # client_type = "openai"
+# 
+# [[models]]
+# model_identifier = "Qwen/Qwen3-VL-8B-Instruct"
+# name = "silicon-vl2"
+# api_provider = "SiliconFlow"
+# price_in = 0.0
+# price_out = 0.0
+# visual = true
+# 
+# [model_task_config.vlm]
+# model_list = ["silicon-vl2"]
+# max_tokens = 1024
