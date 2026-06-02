@@ -154,7 +154,7 @@ python tools/wechat_patcher.py
 4. 手机扫码（**不要点确认**）→ 再扫一次 → 点确认登录
 
 > ⚠️ 补丁仅临时修改内存，重启微信后需重新执行。仅供学习研究。
-> 📥 下载: [wechat_patcher.py](tools/wechat_patcher.py)
+> 📥 下载: [wechat_patcher.py](https://raw.githubusercontent.com/Sw1mFish/MaiBot-Wechat/master/tools/wechat_patcher.py)
 > 作者：B站 [@山山official](https://space.bilibili.com/695805824)
 
 
