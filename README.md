@@ -1,5 +1,5 @@
 <div align="right">
-  [🇨🇳 中文] | [🇬🇧 English](README_EN.md)
+  [🇨🇳 中文] | [🇬🇧 English](README-EN.md)
 </div>
 
 
