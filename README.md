@@ -1,7 +1,5 @@
-<div align="right">
-  [🇨🇳 中文] | [🇬🇧 English](README-EN.md)
-</div>
-
+| 🇨🇳 [中文] | 🇬🇧 [English](https://github.com/Sw1mFish/MaiBot-Wechat/blob/master/README-EN.md) |
+|---|---|
 
 # MaiBot 麦麦 — 微信 AI 机器人
 
