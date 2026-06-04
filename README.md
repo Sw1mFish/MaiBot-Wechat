@@ -1,3 +1,8 @@
+<div align="right">
+  [🇨🇳 中文] | [🇬🇧 [English](README_EN.md)]
+</div>
+
+
 # MaiBot 麦麦 — 微信 AI 机器人
 
 [![Download ZIP](https://img.shields.io/badge/Download-ZIP-green)](https://github.com/Sw1mFish/MaiBot-Wechat/archive/refs/heads/master.zip)
