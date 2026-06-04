@@ -1,6 +1,4 @@
-| 🇨🇳 [中文] | 🇬🇧 [English](https://github.com/Sw1mFish/MaiBot-Wechat/blob/master/README-EN.md) |
-|---|---|
-
+<p align="right"><a href="https://github.com/Sw1mFish/MaiBot-Wechat/blob/master/README-EN.md">🌐 English</a></p>
 # MaiBot 麦麦 — 微信 AI 机器人
 
 [![Download ZIP](https://img.shields.io/badge/Download-ZIP-green)](https://github.com/Sw1mFish/MaiBot-Wechat/archive/refs/heads/master.zip)
